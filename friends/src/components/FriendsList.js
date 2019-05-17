@@ -60,11 +60,11 @@ class FriendsList extends React.Component {
           return (
             <div className="friend-card">
               <i
-                class="fas fa-pencil-alt"
+                className="fas fa-pencil-alt"
                 onClick={() => this.setState({ editingFriendId: friend.id })}
               />
               <i
-                class="fas fa-times"
+                className="fas fa-times"
                 onClick={() => this.deleteFriend(friend.id)}
               />
               <h4>{friend.name}</h4>

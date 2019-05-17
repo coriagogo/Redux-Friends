@@ -24,14 +24,14 @@ export const getData = () => dispatch => {
     dispatch({ type: FETCH_DATA_START });
     axios
         .get('http://localhost:5000/api/friends', {
-            headers: {Authorization: localStorage.getItem('token') }
+            headers: { Authorization: localStorage.getItem('token') }
         })
         .then(res => {
             dispatch({ type: FETCH_DATA_SUCCESS, payload: res.data });
         })
         .catch(err => {
             if (err.response.status === 403) {
-                dispatch({ type: USER_UNAUTHORIZED, payload: err.response});
+                dispatch({ type: USER_UNAUTHORIZED, payload: err.response });
             } else {
                 dispatch({ type: FETCH_DATA_FAILURE, payload: err.response });
             }
