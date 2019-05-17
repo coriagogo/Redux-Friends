@@ -60,9 +60,10 @@ class Login extends React.Component {
     }
 }
 
-const mapStateToProps = state => ({
-    isLoggingIn: state.isLoggingIn
-});
+const mapStateToProps = ({ error, loggingIn }) => ({
+    error,
+    loggingIn
+})
 
 export default connect(
     mapStateToProps,

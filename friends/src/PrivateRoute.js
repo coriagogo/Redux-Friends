@@ -22,7 +22,10 @@ const PrivateRoute =({
     );
 };
 
-const mapStateToProps = ({ errorStatusCode }) => ({ errorStatusCode});
+const mapStateToProps = ({ token, errorStatusCode }) => ({ 
+    errorStatusCode,
+    token
+});
 
 export default withRouter(
     connect(

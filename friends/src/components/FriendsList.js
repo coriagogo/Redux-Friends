@@ -1,31 +1,101 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { connect } from 'react-redux'
+import { withRouter } from 'react-router-dom';
+import Loader from 'react-loader-spinner';
 
-import { getFriends } from '../actions'
-import Friend from './Friend.js' 
+import { getData, deleteFriends, editFriend } from '../actions';
+import EditFriend from './EditFriend';
 
-class FriendsList extends Component {
+
+
+
+
+class FriendsList extends React.Component {
+    state = {
+        deletingFriend: null,
+        editingFriendId: null
+    };
+
     componentDidMount(){
-        this.props.getFriends()
+        this.props.getData();
     }
+
+    deleteFriend = id => {
+        this.setState({ deletingFriendId: id });
+        this.props.deleteFriends(id);
+    };
+
+    editFriend = (e, friend) => {
+        e.preventDefault();
+        this.props.editFriend(friend)
+        .then(() => {
+            this.setState({ editingFriendId: null });
+        });
+    };
+
+
 
     render(){
-        return (
-            <div>
-                {this.props.fetchingFriends ? <h1>Loading friends...</h1> : null}
-                {this.props.error !== '' ? <h1>{this.props.error}</h1> : null }
-                {this.props.friends.map(friend => <Friend friend={friend} key={Math.random()}/>)}
+        if (this.props.fetchingFriends)
+      return (
+        <div className="friends" style={{ paddingTop: '36px' }}>
+          <Loader type="Puff" color="#ffffff" height="100" width="100" />
+        </div>
+      );
+    return (
+      <div className="friends">
+        <h2>Friends 🦸‍♀️🦸‍♂️</h2>
+        {this.props.friends.map(friend => {
+          if (this.state.editingFriendId === friend.id) {
+            return (
+              <div className="friend-card">
+                <EditFriend
+                  friend={friend}
+                  editFriend={this.editFriend}
+                  editingFriend={this.props.editingFriend}
+                />
+              </div>
+            );
+          }
+          return (
+            <div className="friend-card">
+              <i
+                class="fas fa-pencil-alt"
+                onClick={() => this.setState({ editingFriendId: friend.id })}
+              />
+              <i
+                class="fas fa-times"
+                onClick={() => this.deleteFriend(friend.id)}
+              />
+              <h4>{friend.name}</h4>
+              <p>{friend.email}</p>
+              {this.props.deletingFriend &&
+                this.state.deletingFriendId === friend.id && (
+                  <p>Deleting Friend 👋</p>
+                )}
             </div>
-        )
+          );
+        })}
+      </div>
+    );
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        friends: state.friends,
-        error: state.error,
-        fetchingFriends: state.fetchingFriends
-    }
-}
+const mapStateToProps = ({
+    deletingFriend,
+    friends, 
+    fetchingFriends, 
+    editingFriend
+}) => ({
+    deletingFriend,
+    editingFriend,
+    friends,
+    fetchingFriends
+});
 
-export default connect(mapStateToProps, {getFriends})(FriendsList)
+export default withRouter(
+    connect(
+        mapStateToProps,
+        { getData, deleteFriends, editFriend }
+    )(FriendsList)
+);
